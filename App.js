@@ -6,13 +6,13 @@ const App = () => {
     const [textObj, setTextObj] = useState({});
 
     const handleAlert = (item) => {
-        let regex = /\$\{([^}]+)\}/g
-        let matches = [...item.AlertMessage.matchAll(regex)];
+        let regex = /\$\{([^}]+)\}/g //regex to check all strings inside ${}
+        let matches = [...item.AlertMessage.matchAll(regex)]; //gets all matched strings 
         let message = item.AlertMessage;
         for (const match of matches) {
-            message = message.replace(match[1], textObj[match[1]] ?? '')
+            message = message.replace(match[1], textObj[match[1]] ?? '') //replace matched string with actual value
         }
-        Alert.alert(message.replace(/[\$\{\}]/g, ''))
+        Alert.alert(message.replace(/[\$\{\}]/g, '')) //remove all ${} syntax
     }
 
     const renderItem = ({item}) => {
