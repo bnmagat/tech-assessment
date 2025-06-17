@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import * as data from './data.json';
-import { Alert, Button, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, FlatList, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 const App = () => {
     const [textObj, setTextObj] = useState({});
@@ -27,7 +27,7 @@ const App = () => {
                     placeholderTextColor="#808080"
                 />
             case "Button":
-                return <View style={{marginVertical: 4}}><Button title={item.Title} color={item.Color} onPress={() => item.AlertMessage && handleAlert(item)}/></View>
+                return <View style={{marginVertical: 4}}><Button title={item.Title} color={item.Color || '#04AA6D'} onPress={() => item.AlertMessage && handleAlert(item)}/></View>
             default:
                 return item.Text && <Text style={[styles[item.Type], styles.text]}>{item.Text}</Text>;
         }
@@ -35,9 +35,11 @@ const App = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>{data.Title}</Text>
-            <Text style={styles.subtitle}>{data.Subtitle}</Text>
-            <FlatList data={data.Fields} renderItem={renderItem} contentContainerStyle={{marginVertical: 16}} />
+            <SafeAreaView>
+                <Text style={styles.title}>{data.Title}</Text>
+                <Text style={styles.subtitle}>{data.Subtitle}</Text>
+                <FlatList data={data.Fields} renderItem={renderItem} contentContainerStyle={{marginVertical: 16}} />
+            </SafeAreaView>
         </View>
     );
 }

@@ -14,7 +14,7 @@
         {
             "ID": "hello-button",
             "Type": "Button",
-            "Title": "Say hi",
+            "Title": "Say Hi",
             "AlertMessage": "Hello ${person-name}"
         }
     ]
