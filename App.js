@@ -4,15 +4,35 @@ import { Alert, Button, FlatList, SafeAreaView, StyleSheet, Text, TextInput, Vie
 
 const App = () => {
     const [textObj, setTextObj] = useState({});
+    const [showButton, setShowButton] = useState(false);
 
     const handleAlert = (item) => {
         let regex = /\$\{([^}]+)\}/g //regex to check all strings inside ${}
         let matches = [...item.AlertMessage.matchAll(regex)]; //gets all matched strings 
         let message = item.AlertMessage;
+        let visibleCondition = item.VisibleCondition;
         for (const match of matches) {
-            message = message.replace(match[1], textObj[match[1]] ?? '') //replace matched string with actual value
+            if(visibleCondition.ID === match[1] && visibleCondition.Operator === 'Equals' && visibleCondition.Value === textObj[match[1]]){
+                setShowButton(true);
+            }else{
+                setShowButton(false);
+            }
         }
         Alert.alert(message.replace(/[\$\{\}]/g, '')) //remove all ${} syntax
+    }
+
+    const onChangeText = (item, val) => {
+        let visibleCondition = data.Fields?.find(i => i.Type === 'Button')?.VisibleCondition;
+
+        if(visibleCondition.ID === item.ID){
+            if((visibleCondition.Operator === 'Equals' && visibleCondition.Value === val) || (visibleCondition.Operator === 'NotEquals' && visibleCondition.Value !== val)){
+                setShowButton(true)
+            }else{
+                setShowButton(false)
+            }
+        }
+
+        
     }
 
     const renderItem = ({item}) => {
@@ -22,12 +42,12 @@ const App = () => {
             case "Text":
                 return <TextInput
                     style={styles.formInput}
-                    onChangeText={val => setTextObj(prev => ({...prev, [item.ID]: val}))}
+                    onChangeText={(val) => onChangeText(item, val)}
                     placeholder={item.Placeholder}
                     placeholderTextColor="#808080"
                 />
             case "Button":
-                return <View style={{marginVertical: 4}}><Button title={item.Title} color={item.Color || '#04AA6D'} onPress={() => item.AlertMessage && handleAlert(item)}/></View>
+                return showButton && <View style={{marginVertical: 4}}><Button title={item.Title} color={item.Color || '#04AA6D'} onPress={() => item.AlertMessage && handleAlert(item)}/></View>
             default:
                 return item.Text && <Text style={[styles[item.Type], styles.text]}>{item.Text}</Text>;
         }
@@ -38,7 +58,7 @@ const App = () => {
             <SafeAreaView>
                 <Text style={styles.title}>{data.Title}</Text>
                 <Text style={styles.subtitle}>{data.Subtitle}</Text>
-                <FlatList data={data.Fields} renderItem={renderItem} contentContainerStyle={{marginVertical: 16}} />
+                <FlatList data={data.Fields} renderItem={renderItem} contentContainerStyle={{flexGrow: 1}} nestedScrollEnabled={true}/>
             </SafeAreaView>
         </View>
     );
